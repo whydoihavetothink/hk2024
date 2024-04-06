@@ -3,3 +3,6 @@ target
 .music
 __pycache__
 id_b.wav
+build
+*.spec
+dist
