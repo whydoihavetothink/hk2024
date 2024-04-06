@@ -1,0 +1,15 @@
+{
+  "name": "mds",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node ./target/index.js"
+  },
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "jsdom": "^24.0.0"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^21.1.6"
+  }
+}
