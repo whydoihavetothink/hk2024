@@ -1,2 +1,4 @@
 node_modules
 target
+.music
+__pychache__
