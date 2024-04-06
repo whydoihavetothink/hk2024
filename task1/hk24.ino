@@ -3,51 +3,7 @@
 #include <notes.h>
 #include <animation.h>
 #include <player.h>
-
-int melody[] = {
-
-  //Based on the arrangement at https://www.flutetunes.com/tunes.php?id=192
-  
-  NOTE_E5, 4,  NOTE_B4,8,  NOTE_C5,8,  NOTE_D5,4,  NOTE_C5,8,  NOTE_B4,8,
-  NOTE_A4, 4,  NOTE_A4,8,  NOTE_C5,8,  NOTE_E5,4,  NOTE_D5,8,  NOTE_C5,8,
-  NOTE_B4, -4,  NOTE_C5,8,  NOTE_D5,4,  NOTE_E5,4,
-  NOTE_C5, 4,  NOTE_A4,4,  NOTE_A4,8,  NOTE_A4,4,  NOTE_B4,8,  NOTE_C5,8,
-
-  NOTE_D5, -4,  NOTE_F5,8,  NOTE_A5,4,  NOTE_G5,8,  NOTE_F5,8,
-  NOTE_E5, -4,  NOTE_C5,8,  NOTE_E5,4,  NOTE_D5,8,  NOTE_C5,8,
-  NOTE_B4, 4,  NOTE_B4,8,  NOTE_C5,8,  NOTE_D5,4,  NOTE_E5,4,
-  NOTE_C5, 4,  NOTE_A4,4,  NOTE_A4,4, REST, 4,
-
-  NOTE_E5, 4,  NOTE_B4,8,  NOTE_C5,8,  NOTE_D5,4,  NOTE_C5,8,  NOTE_B4,8,
-  NOTE_A4, 4,  NOTE_A4,8,  NOTE_C5,8,  NOTE_E5,4,  NOTE_D5,8,  NOTE_C5,8,
-  NOTE_B4, -4,  NOTE_C5,8,  NOTE_D5,4,  NOTE_E5,4,
-  NOTE_C5, 4,  NOTE_A4,4,  NOTE_A4,8,  NOTE_A4,4,  NOTE_B4,8,  NOTE_C5,8,
-
-  NOTE_D5, -4,  NOTE_F5,8,  NOTE_A5,4,  NOTE_G5,8,  NOTE_F5,8,
-  NOTE_E5, -4,  NOTE_C5,8,  NOTE_E5,4,  NOTE_D5,8,  NOTE_C5,8,
-  NOTE_B4, 4,  NOTE_B4,8,  NOTE_C5,8,  NOTE_D5,4,  NOTE_E5,4,
-  NOTE_C5, 4,  NOTE_A4,4,  NOTE_A4,4, REST, 4,
-  
-
-  NOTE_E5,2,  NOTE_C5,2,
-  NOTE_D5,2,   NOTE_B4,2,
-  NOTE_C5,2,   NOTE_A4,2,
-  NOTE_GS4,2,  NOTE_B4,4,  REST,8, 
-  NOTE_E5,2,   NOTE_C5,2,
-  NOTE_D5,2,   NOTE_B4,2,
-  NOTE_C5,4,   NOTE_E5,4,  NOTE_A5,2,
-  NOTE_GS5,2,
-
-};
-
-uint32_t animation[] = {
-  0xC0FFFFFF,
-  0xFFC0FFFF,
-  0xFFFFC0FF,
-  0xFFFFFFC0,
-  0xFFFFC0FF,
-  0xFFC0FFFF
-};
+#include <resources.h>
 
 Player player(3);
 
@@ -60,7 +16,12 @@ public:
   enum class State { WAITING, TONE, SCALE, SONG };
 public:
 
-  void setup() {}
+  void setup() {
+    melodies.emplace_back(std::vector<int>(std::begin(MELODY_TETRIS), std::end(MELODY_TETRIS)), 144);
+    melodies.emplace_back(std::vector<int>(std::begin(MELODY_DOOM), std::end(MELODY_DOOM)), 225);
+    melodies.emplace_back(std::vector<int>(std::begin(MELODY_NGGYU), std::end(MELODY_NGGYU)), 114);
+    melodies.emplace_back(std::vector<int>(std::begin(MELODY_TAKEONME), std::end(MELODY_TAKEONME)), 140);
+  }
   void tick() {}
 
   void button_pressed(int btn) {
@@ -87,18 +48,25 @@ public:
           start_note_id--;
           start();
         }
+      } else if (btn == 2) {
+        melody_id = (melody_id + 1) % melodies.size();
+        start();
       }
     }
   }
 
 private:
   State state;
-  int start_note_id= 46; // A4
+  int start_note_id = 46; // A4
+  int melody_id = 0;
+
+  std::vector<Melody> melodies;
 
   void start() {
     if (state == State::WAITING) {
       player.pause();
       anim_text.clear();
+      disp.set_anim(&anim_text);
     } else if (state == State::TONE) {
       player.single_tone(start_note_id);
       anim_text.set_text(NOTE_NAMES[start_note_id], std::to_string(FREQUENCIES[start_note_id]), 1000);
@@ -110,7 +78,7 @@ private:
       disp.set_anim(&anim_text);
       player.resume();
     } else if (state == State::SONG) {
-      player.parse_melody(melody, sizeof(melody)/sizeof(melody[0]), 144);
+      player.parse_melody(melodies[melody_id]);
       anim_song.reset();
       disp.set_anim(&anim_song);
       player.resume();

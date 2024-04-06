@@ -9,6 +9,13 @@ struct Note {
   Note(int f, double d) : freq(f), dur(d) {}
 };
 
+struct Melody {
+  std::vector<int> data;
+  int tempo;
+
+  Melody(const std::vector<int>& d, int t) : data(d), tempo(t) {}
+};
+
 double parse_dur(int dur) {
   if (dur >= 0) {
     return 1.0 / dur;
@@ -20,11 +27,11 @@ class Player {
 public:
   Player(int p) : pin(p) {}
 
-  void parse_melody(const int* melody, int size, int tmp = 60) {
-    tempo = tmp;
+  void parse_melody(const Melody& melody) {
+    tempo = melody.tempo;
     notes.clear();
-    for (int i = 0; i < size; i += 2) {
-      notes.emplace_back(melody[i], parse_dur(melody[i + 1]));
+    for (int i = 0; i < melody.data.size(); i += 2) {
+      notes.emplace_back(melody.data[i], parse_dur(melody.data[i + 1]));
     }
     restart();
   }
