@@ -51,24 +51,100 @@ uint32_t animation[] = {
 
 Player player(3);
 
-Animation anim(4, 7, 8);
+Animation anim_song;
+Animation anim_text;
+Display disp(4, 7, 8);
 
-Button b1(A1, []() { digitalWrite(LED_BUILTIN, HIGH); player.playpause(); }, []() { digitalWrite(LED_BUILTIN, LOW); });
+class Main {
+public:
+  enum class State { WAITING, TONE, SCALE, SONG };
+public:
+
+  void setup() {}
+  void tick() {}
+
+  void button_pressed(int btn) {
+    if (state == State::WAITING) {
+      if (btn == 1) {
+        state = State::TONE;
+      } else if (btn == 2) {
+        state = State::SCALE;
+      } else if (btn == 3) {
+        state = State::SONG;
+      }
+      start();
+    } else {
+      if (btn == 1) {
+        state = State::WAITING;
+        start();
+      } else if (btn == 2 && state != State::SONG) {
+        if (start_note_id+ 1 < N_NOTES) {
+          start_note_id++;
+          start();
+        }
+      } else if (btn == 3 && state != State::SONG) {
+        if (start_note_id > 0) {
+          start_note_id--;
+          start();
+        }
+      }
+    }
+  }
+
+private:
+  State state;
+  int start_note_id= 46; // A4
+
+  void start() {
+    if (state == State::WAITING) {
+      player.pause();
+      anim_text.clear();
+    } else if (state == State::TONE) {
+      player.single_tone(start_note_id);
+      anim_text.set_text(NOTE_NAMES[start_note_id], std::to_string(FREQUENCIES[start_note_id]), 1000);
+      disp.set_anim(&anim_text);
+      player.resume();
+    } else if (state == State::SCALE) {
+      player.dur_scale(start_note_id,120);
+      anim_text.set_text(NOTE_NAMES[start_note_id]);
+      disp.set_anim(&anim_text);
+      player.resume();
+    } else if (state == State::SONG) {
+      player.parse_melody(melody, sizeof(melody)/sizeof(melody[0]), 144);
+      anim_song.reset();
+      disp.set_anim(&anim_song);
+      player.resume();
+    }
+  }
+};
+
+Main control;
+
+Button b1(A1, []() { control.button_pressed(1); }, 0);
+Button b2(A2, []() { control.button_pressed(2); }, 0);
+Button b3(A3, []() { control.button_pressed(3); }, 0);
 
 void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);
   player.setup();
-  anim.setup();
+  anim_song.setup();
+  anim_text.setup();
+  disp.setup();
   b1.setup();
+  b2.setup();
+  b3.setup();
+  control.setup();
 
-  player.parse_melody(melody, sizeof(melody)/sizeof(melody[0]), 144);
-  anim.parse_anim(animation, sizeof(animation)/sizeof(animation[0]));
-
-  player.set_anim(anim);
+  anim_song.parse_anim(animation, sizeof(animation)/sizeof(animation[0]));
+  player.set_anim(&anim_song);
 }
 
 void loop() {
   player.tick();
-  anim.tick();
+  anim_song.tick();
+  anim_text.tick();
+  disp.tick();
   b1.tick();
+  b2.tick();
+  b3.tick();
+  control.tick();
 }

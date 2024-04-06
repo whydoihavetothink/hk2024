@@ -1,5 +1,7 @@
 #include <vector>
 
+constexpr int DUR_SCALE[] = {0,2,4,5,7,9,11,12};
+
 struct Note {
   int freq;
   double dur;
@@ -24,6 +26,26 @@ public:
     for (int i = 0; i < size; i += 2) {
       notes.emplace_back(melody[i], parse_dur(melody[i + 1]));
     }
+    restart();
+  }
+
+  void single_tone(int tone_id, double dur = 1.0) {
+    tempo = 1;
+    notes.clear();
+    notes.emplace_back(FREQUENCIES[tone_id], dur);
+    restart();
+  }
+
+  void dur_scale(int tone_id, int tmp) {
+    tempo = tmp;
+    notes.clear();
+    for (int i = 0; i < 8; ++i) {
+      notes.emplace_back(FREQUENCIES[tone_id + DUR_SCALE[i]], 0.25);
+    }
+    for (int i = 7; i >= 0; --i) {
+      notes.emplace_back(FREQUENCIES[tone_id + DUR_SCALE[i]], 0.25);
+    }
+    restart();
   }
 
   void setup() {
@@ -52,13 +74,15 @@ public:
     playing = false;
   }
 
-  void set_anim(Animation& a) {
-    anim = &a;
+  void set_anim(Animation* a) {
+    anim = a;
   }
 
   void tick() {
-    if (!playing)
+    if (!playing) {
+      noTone(pin);
       return;
+    }
     long curr = millis();
     auto note = notes[current_note];
     double whole_note = 60000.0 * 4 / tempo;

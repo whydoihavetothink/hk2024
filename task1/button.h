@@ -15,7 +15,7 @@ public:
       new_state = curr;
       change = millis();
     }
-    if (new_state != state && (millis() - change) >= 100) {
+    if (new_state != state && (millis() - change) >= 20) {
       state = new_state;
       if (on_change[state]) {
         on_change[state]();
