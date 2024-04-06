@@ -1,4 +1,5 @@
 node_modules
 target
 .music
-__pychache__
+__pycache__
+id_b.wav
