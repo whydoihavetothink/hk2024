@@ -15,6 +15,7 @@ dist
 
 # testing
 /coverage
+package-lock.json
 
 # production
 /build

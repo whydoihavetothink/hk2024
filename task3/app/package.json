@@ -2,7 +2,7 @@
   "name": "app",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:3000",
+  "proxy": "http://localhost:8080",
   "dependencies": {
     "@types/node": "^16.18.95",
     "@types/react": "^18.2.74",
@@ -14,11 +14,12 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "util": "^0.12.5"
   },
   "scripts": {
     "start": "react-scripts start",
-    "fs": "node src/http-server.js",
+    "fs": "node src/server/server.js",
     "build": "react-scripts build"
   },
   "eslintConfig": {

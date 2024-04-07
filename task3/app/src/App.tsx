@@ -18,7 +18,16 @@ function App () {
             const formData = new FormData();
             formData.append("file", file);
 
-            axios.post("/api", formData);
+            const out = await axios.post("http://localhost:8080/upload", formData)
+                .then((org) => {
+                    console.log(org)
+                    return "file uploaded"
+                })
+                .catch((_) => {
+                    return "something went wrong"
+                })
+            ;
+            console.log(out)
 
 /*
         const data = await fetch("https://localhost:3000/api/local", {
