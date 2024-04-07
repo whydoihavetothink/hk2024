@@ -10,8 +10,11 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
+    <h1>Upload MP3</h1>
     <App />
-    <Comp/>
+    <h1>Composer</h1>
+    <Comp />
+    <h1>Morse</h1>
     <Morse/>
   </React.StrictMode>
 );

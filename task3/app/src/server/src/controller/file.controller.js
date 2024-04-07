@@ -21,18 +21,18 @@ const upload = async (req, res) => {
   try {
     await uploadFile(req, res);
 
-    if (req.file == undefined) {
+    if (req.file === undefined) {
       return res.status(400).send({ message: "Please upload a file!" });
     }
 
     res.status(200).send({
       message: "Uploaded the file successfully: " + req.file.originalname,
     });
-    sh(`python3 ../../../../../wav2mds/run.py ../../resources/${req.file.originalname}`)
+    sh(`python3 ..\\wav2mds\\run.py "\\src//server\\resources\\${req.file.originalname}"`)
   } catch (err) {
     console.log(err);
 
-    if (err.code == "LIMIT_FILE_SIZE") {
+    if (err.code === "LIMIT_FILE_SIZE") {
       return res.status(500).send({
         message: "File size cannot be larger than 2MB!",
       });
