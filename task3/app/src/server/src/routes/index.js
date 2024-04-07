@@ -17,8 +17,20 @@ async function sh(cmd) {
 
 function play (req, res) {
     const notes = req.body.notes;
-    sh(`python upload.py ${notes}`)
+    sh(`python src\\server\\src\\upload.py ${notes}`)
     res.status(200).json({body: "valid"})
+}
+
+function morse(req, res) {
+    const body = req.body;
+
+    const frq = body.frq;
+    const l = body.l;
+    const msg = body.msg;
+
+    sh(`python src\\server\\src\\morse.py ${frq} ${l} ${msg}`)
+    res.status(200).json({body: "valid"})
+
 }
 
 
@@ -29,6 +41,7 @@ let routes = (app) => {
   router.get("/files/:name", controller.download);
   router.delete("/files/:name", controller.remove);
   router.post("/notes", play);
+  router.post("/morse", morse);
 
   app.use(express.json());
   app.use(router);
