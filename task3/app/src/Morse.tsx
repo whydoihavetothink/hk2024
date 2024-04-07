@@ -55,12 +55,12 @@ function Morse () {
         </div>
         <button onClick={() => speeder(200)}>Fast</button>
         <button onClick={() => speeder(400)}>Medium</button>
-        <button onClick={() => speeder(600)}>Fast</button>
+        <button onClick={() => speeder(600)}>Slow</button>
         <div>
         { speed }
         </div>
         </div>
-        <input value="hello world" onChange={e => setMsg(e.target.value)}></input>
+        <input value={msg} onChange={e => setMsg(e.target.value)}></input>
         <button onClick={submit}>submit morse</button>
     </>
 }

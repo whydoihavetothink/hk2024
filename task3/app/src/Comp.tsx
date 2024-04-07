@@ -5,10 +5,11 @@ import React, { useState } from "react";
 function Comp () {
     const [ music, setMusic ] = useState<string>("");
     const [ nice, setNice ] = useState<string>("");
+    const [ msg, setMsg ] = useState<number>(1000);
 
     function note(n: string, p: string) {
-        setMusic(music + n + " 1000 ")
-        setNice(nice + p + " ")
+        setMusic(music + n + ` ${msg} `)
+        setNice(nice + p + ` (${msg}) `)
         }
 
     function submit() {
@@ -25,6 +26,7 @@ function Comp () {
     }
 
     return <>
+        <div>
         <button onClick={() => note("440", "A")}>A</button>
         <button onClick={() => note("466", "A#")}>A#</button>
         <button onClick={() => note("494", "B")}>B</button>
@@ -37,10 +39,15 @@ function Comp () {
         <button onClick={() => note("740", "F#")}>F#</button>
         <button onClick={() => note("784", "G")}>G</button>
         <button onClick={() => note("831", "G#")}>G#</button>
+        <button onClick={() => note("0", "-")}>Pause</button>
+        </div> 
+        <input value={msg} onChange={e => setMsg(+e.target.value)} type="number"></input>
+        ms
         <div>
             { nice }
         </div> 
         <button onClick={submit}>submit</button>
+        <button onClick={() => { setMusic(""); setNice("") }}>clear</button>
     </>
 }
 
